@@ -37,7 +37,7 @@ ollama serve &\n\
 sleep 10\n\
 \n\
 # Pull the llama3 model\n\
-ollama pull llama3\n\
+ollama pull llama3.2:1b\n\
 \n\
 # Start the Node.js application\n\
 node server.js' > start.sh
