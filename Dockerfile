@@ -33,13 +33,13 @@ RUN echo '#!/bin/bash\n\
 # Start Ollama in background\n\
 ollama serve &\n\
 \n\
-# Wait for Ollama to start\n\
-sleep 10\n\
+# Give Ollama a moment to start\n\
+sleep 5\n\
 \n\
-# Pull the llama3 model\n\
-ollama pull llama3.2:1b\n\
+# Kick off model pull in the background (do not block startup)\n\
+(sh -c "ollama pull ${MODEL_NAME:-llama3.2:1b} || true") &\n\
 \n\
-# Start the Node.js application\n\
+# Start the Node.js application (Render provides $PORT)\n\
 node server.js' > start.sh
 
 RUN chmod +x start.sh
