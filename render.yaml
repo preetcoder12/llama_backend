@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: llama3-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: OLLAMA_URL
+        value: http://localhost:11434
+      - key: MODEL_NAME
+        value: llama3
+      - key: PORT
+        value: 3000
+    healthCheckPath: /health
