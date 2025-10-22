@@ -24,6 +24,39 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Status endpoint to check if Ollama is ready
+app.get('/api/status', async (req, res) => {
+  try {
+    const ollamaReady = await checkOllamaReady();
+    res.json({
+      success: true,
+      data: {
+        backend: 'running',
+        ollama: ollamaReady ? 'ready' : 'loading',
+        model: MODEL_NAME,
+        message: ollamaReady ? 'All services are ready' : 'Model is still downloading, please wait 2-3 minutes',
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to check status',
+      details: error.message
+    });
+  }
+});
+
+// Check if Ollama is ready
+async function checkOllamaReady() {
+  try {
+    await axios.get(`${OLLAMA_BASE_URL}/api/tags`, { timeout: 5000 });
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 // Main API endpoint to interact with Llama 3
 app.post('/api/chat', async (req, res) => {
   try {
@@ -34,6 +67,17 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({
         success: false,
         error: 'Prompt is required and must be a non-empty string'
+      });
+    }
+
+    // Check if Ollama is ready
+    const ollamaReady = await checkOllamaReady();
+    if (!ollamaReady) {
+      return res.status(503).json({
+        success: false,
+        error: 'Ollama service is still starting up',
+        details: 'The AI model is being downloaded. Please try again in 2-3 minutes.',
+        status: 'model_loading'
       });
     }
 
@@ -125,6 +169,17 @@ app.post('/api/vibe-recommendations', async (req, res) => {
       return res.status(400).json({
         success: false,
         error: 'Selected vibes are required and must be a non-empty array'
+      });
+    }
+
+    // Check if Ollama is ready
+    const ollamaReady = await checkOllamaReady();
+    if (!ollamaReady) {
+      return res.status(503).json({
+        success: false,
+        error: 'Ollama service is still starting up',
+        details: 'The AI model is being downloaded. Please try again in 2-3 minutes.',
+        status: 'model_loading'
       });
     }
 
@@ -276,6 +331,7 @@ app.use('*', (req, res) => {
     error: 'Endpoint not found',
     availableEndpoints: [
       'GET /health',
+      'GET /api/status',
       'POST /api/chat',
       'POST /api/vibe-recommendations',
       'GET /api/models'
