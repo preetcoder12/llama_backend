@@ -45,7 +45,7 @@ node server.js' > start.sh
 RUN chmod +x start.sh
 
 # Expose ports
-EXPOSE 3000 11434
+EXPOSE $PORT 11434
 
 # Start the application
 CMD ["./start.sh"]

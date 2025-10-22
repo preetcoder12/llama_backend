@@ -293,7 +293,7 @@ app.use((error, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Llama 3 Backend API is running on port ${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/health`);
   console.log(`💬 Chat endpoint: http://localhost:${PORT}/api/chat`);
