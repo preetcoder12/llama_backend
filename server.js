@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Ollama API configuration
-const OLLAMA_BASE_URL = process.env.OLLAMA_URL || "http://localhost:11434";
+const OLLAMA_BASE_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
 const MODEL_NAME = process.env.MODEL_NAME || "llama3";
 
 // Health check endpoint
@@ -100,6 +100,7 @@ app.get("/api/status", async (req, res) => {
 // Check if Ollama is ready and model is available
 async function checkOllamaReady() {
   try {
+    console.log(`[DEBUG] Checking Ollama at: ${OLLAMA_BASE_URL}`);
     // First check if Ollama service is running
     const tagsResponse = await axios.get(`${OLLAMA_BASE_URL}/api/tags`, { timeout: 5000 });
     
