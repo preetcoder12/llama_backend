@@ -8,15 +8,21 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
     "axios": "^1.6.0",
-    "body-parser": "^1.20.2"
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
-  "keywords": ["llama3", "ollama", "api", "nodejs"],
+  "keywords": [
+    "llama3",
+    "ollama",
+    "api",
+    "nodejs"
+  ],
   "author": "",
   "license": "MIT"
 }

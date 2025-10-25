@@ -1,0 +1,15 @@
+nohup: ignoring input
+🚀 Llama 3 Backend API is running on port 3000
+📡 Health check: http://localhost:3000/health
+💬 Chat endpoint: http://localhost:3000/api/chat
+🎯 Vibe recommendations: http://localhost:3000/api/vibe-recommendations
+📋 Models endpoint: http://localhost:3000/api/models
+
+📝 Example Postman requests:
+POST http://localhost:3000/api/chat
+Content-Type: application/json
+Body: {"prompt": "Hello, how are you?"}
+
+POST http://localhost:3000/api/vibe-recommendations
+Content-Type: application/json
+Body: {"selectedVibes": ["mountains", "lakes"], "location": "Delhi", "budget": "2000", "duration": "1 day"}
