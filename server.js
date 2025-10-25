@@ -307,6 +307,15 @@ Do NOT include any text, explanation, greeting, or formatting outside this JSON 
   "recommendations": []
 }`;
 
+    // Create the user prompt from the input data
+    const vibePrompt = `Based on these travel preferences:
+- Vibes: ${selectedVibes.join(", ")}
+- Location: ${location || "any location"}
+- Budget: ${budget || "any budget"}
+- Duration: ${duration || "any duration"}
+
+Please provide travel recommendations that match these preferences.`;
+
     console.log(
       `Sending vibe-based request to Ollama with preferences: ${selectedVibes.join(
         ", "
