@@ -37,7 +37,7 @@ ollama serve &\n\
 sleep 5\n\
 \n\
 # Kick off model pull in the background (do not block startup)\n\
-(sh -c "ollama pull ${MODEL_NAME:-llama3.2:1b} || true") &\n\
+(sh -c "ollama pull ${MODEL_NAME:-llama3} || true") &\n\
 \n\
 # Start the Node.js application (Render provides $PORT)\n\
 node server.js' > start.sh

@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Ollama API configuration
 const OLLAMA_BASE_URL = process.env.OLLAMA_URL || "http://localhost:11434";
-const MODEL_NAME = process.env.MODEL_NAME || "llama2";
+const MODEL_NAME = process.env.MODEL_NAME || "llama3";
 
 // Health check endpoint
 app.get("/health", (req, res) => {
@@ -49,15 +49,42 @@ app.get("/health", (req, res) => {
 app.get("/api/status", async (req, res) => {
   try {
     const ollamaReady = await checkOllamaReady();
+    
+    // Get more detailed status information
+    let detailedMessage = "All services are ready";
+    let ollamaStatus = "ready";
+    
+    if (!ollamaReady) {
+      try {
+        // Try to get more specific information about what's wrong
+        const tagsResponse = await axios.get(`${OLLAMA_BASE_URL}/api/tags`, { timeout: 5000 });
+        const models = tagsResponse.data.models || [];
+        const modelExists = models.some(model => 
+          model.name === MODEL_NAME || 
+          model.name === `${MODEL_NAME}:latest` ||
+          model.name.includes(MODEL_NAME)
+        );
+        
+        if (!modelExists) {
+          detailedMessage = `Model ${MODEL_NAME} not found. Available models: ${models.map(m => m.name).join(', ')}`;
+          ollamaStatus = "model_missing";
+        } else {
+          detailedMessage = `Model ${MODEL_NAME} exists but not ready for inference. Please wait 1-2 minutes.`;
+          ollamaStatus = "model_loading";
+        }
+      } catch (error) {
+        detailedMessage = "Ollama service is not responding. Please check if Ollama is running.";
+        ollamaStatus = "service_down";
+      }
+    }
+    
     res.json({
       success: true,
       data: {
         backend: "running",
-        ollama: ollamaReady ? "ready" : "loading",
+        ollama: ollamaStatus,
         model: MODEL_NAME,
-        message: ollamaReady
-          ? "All services are ready"
-          : "Model is still downloading, please wait 2-3 minutes",
+        message: detailedMessage,
         timestamp: new Date().toISOString(),
       },
     });
@@ -70,12 +97,48 @@ app.get("/api/status", async (req, res) => {
   }
 });
 
-// Check if Ollama is ready
+// Check if Ollama is ready and model is available
 async function checkOllamaReady() {
   try {
-    await axios.get(`${OLLAMA_BASE_URL}/api/tags`, { timeout: 5000 });
-    return true;
+    // First check if Ollama service is running
+    const tagsResponse = await axios.get(`${OLLAMA_BASE_URL}/api/tags`, { timeout: 5000 });
+    
+    // Check if our specific model is available
+    const models = tagsResponse.data.models || [];
+    const modelExists = models.some(model => 
+      model.name === MODEL_NAME || 
+      model.name === `${MODEL_NAME}:latest` ||
+      model.name.includes(MODEL_NAME)
+    );
+    
+    if (!modelExists) {
+      console.log(`Model ${MODEL_NAME} not found in available models:`, models.map(m => m.name));
+      return false;
+    }
+    
+    // Try to make a simple test request to ensure model is fully loaded
+    try {
+      const testResponse = await axios.post(
+        `${OLLAMA_BASE_URL}/api/generate`,
+        {
+          model: MODEL_NAME,
+          prompt: "test",
+          stream: false,
+          options: {
+            num_predict: 1
+          }
+        },
+        { timeout: 10000 }
+      );
+      
+      return true;
+    } catch (testError) {
+      console.log(`Model ${MODEL_NAME} exists but not ready:`, testError.message);
+      return false;
+    }
+    
   } catch (error) {
+    console.log(`Ollama service check failed:`, error.message);
     return false;
   }
 }
