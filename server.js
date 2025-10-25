@@ -106,15 +106,48 @@ async function checkOllamaReady() {
     
     // Check if our specific model is available
     const models = tagsResponse.data.models || [];
+    console.log(`[DEBUG] Available models:`, models.map(m => m.name));
+    console.log(`[DEBUG] Looking for model: ${MODEL_NAME}`);
+    
+    // Try multiple model name variations
+    const possibleModelNames = [
+      MODEL_NAME,
+      `${MODEL_NAME}:latest`,
+      `${MODEL_NAME}:7b`,
+      `${MODEL_NAME}:13b`,
+      `llama3`,
+      `llama3:latest`,
+      `llama3:7b`,
+      `llama3:13b`,
+      `llama3.2:1b`,
+      `llama3.2:3b`,
+      `llama3.2:7b`
+    ];
+    
     const modelExists = models.some(model => 
-      model.name === MODEL_NAME || 
-      model.name === `${MODEL_NAME}:latest` ||
-      model.name.includes(MODEL_NAME)
+      possibleModelNames.some(name => 
+        model.name === name || 
+        model.name.includes(name) ||
+        name.includes(model.name)
+      )
     );
     
     if (!modelExists) {
       console.log(`Model ${MODEL_NAME} not found in available models:`, models.map(m => m.name));
-      return false;
+      console.log(`[DEBUG] Attempting to pull model ${MODEL_NAME}...`);
+      
+      // Try to pull the model if it doesn't exist
+      try {
+        await axios.post(`${OLLAMA_BASE_URL}/api/pull`, {
+          name: MODEL_NAME,
+          stream: false
+        }, { timeout: 30000 });
+        console.log(`[DEBUG] Model pull initiated for ${MODEL_NAME}`);
+        return false; // Still not ready, but pull started
+      } catch (pullError) {
+        console.log(`[DEBUG] Model pull failed:`, pullError.message);
+        return false;
+      }
     }
     
     // Try to make a simple test request to ensure model is fully loaded
@@ -442,6 +475,34 @@ app.get("/api/models", async (req, res) => {
     res.status(503).json({
       success: false,
       error: "Cannot connect to Ollama service",
+      details: error.message,
+    });
+  }
+});
+
+// Manual model pull endpoint
+app.post("/api/pull-model", async (req, res) => {
+  try {
+    const { modelName } = req.body;
+    const targetModel = modelName || MODEL_NAME;
+    
+    console.log(`[DEBUG] Manual model pull requested for: ${targetModel}`);
+    
+    const response = await axios.post(`${OLLAMA_BASE_URL}/api/pull`, {
+      name: targetModel,
+      stream: false
+    }, { timeout: 300000 }); // 5 minutes timeout
+    
+    res.json({
+      success: true,
+      message: `Model ${targetModel} pull initiated`,
+      data: response.data,
+    });
+  } catch (error) {
+    console.error("Error pulling model:", error.message);
+    res.status(500).json({
+      success: false,
+      error: "Failed to pull model",
       details: error.message,
     });
   }
