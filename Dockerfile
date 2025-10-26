@@ -46,8 +46,8 @@ for i in {1..30}; do\n\
 done\n\
 \n\
 # Pull the model and wait for completion\n\
-echo "Pulling model ${MODEL_NAME:-llama3}..."\n\
-ollama pull ${MODEL_NAME:-llama3}\n\
+echo "Pulling model ${MODEL_NAME:-llama3.2:1b}..."\n\
+ollama pull ${MODEL_NAME:-llama3.2:1b}\n\
 \n\
 # Verify model is available\n\
 echo "Verifying model is available..."\n\

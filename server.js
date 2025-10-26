@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Ollama API configuration
 const OLLAMA_BASE_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
-const MODEL_NAME = process.env.MODEL_NAME || "llama3";
+const MODEL_NAME = process.env.MODEL_NAME || "llama3.2:1b";
 
 // Health check endpoint
 app.get("/health", (req, res) => {
