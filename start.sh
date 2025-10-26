@@ -22,9 +22,9 @@ for i in {1..30}; do
     fi
 done
 
-# Pull the llama3.2:1b model (smaller, faster)
-echo "📥 Pulling Llama 3.2 1B model..."
-ollama pull llama3.2:1b
+# Pull the llama3:latest model (best Llama 3 model)
+echo "📥 Pulling Llama 3 latest model..."
+ollama pull llama3:latest
 
 # Wait for model to be ready
 echo "⏳ Waiting for model to be ready..."

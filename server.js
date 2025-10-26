@@ -6,7 +6,7 @@ const axios = require("axios");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const PING_URL = 'https://llama-backend-1-ulet.onrender.com/';
+const PING_URL = 'http://localhost:3000';
 const PING_INTERVAL_MS = 60 * 1000; // 1 minute
 
 // Middleware
@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Ollama API configuration
 const OLLAMA_BASE_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
-const MODEL_NAME = process.env.MODEL_NAME || "tinyllama:1.1b";
+const MODEL_NAME = process.env.MODEL_NAME || "llama3:latest";
 
 function pingRenderBackend() {
   fetch(PING_URL)
@@ -345,8 +345,7 @@ async function checkOllamaReady() {
     // Check if our model exists
     const modelExists = models.some(model => 
       model.name === MODEL_NAME || 
-      model.name === `${MODEL_NAME}:latest` ||
-      model.name.includes('llama3')
+      model.name === `${MODEL_NAME}:latest`
     );
 
     if (!modelExists) {
@@ -519,8 +518,7 @@ app.get("/api/status", async (req, res) => {
       
       const modelExists = availableModels.some(model => 
         model === MODEL_NAME || 
-        model === `${MODEL_NAME}:latest` ||
-        model.includes('llama3')
+        model === `${MODEL_NAME}:latest`
       );
 
       if (!modelExists) {
