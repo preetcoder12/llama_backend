@@ -64,10 +64,10 @@ for i in {1..60}; do\n\
 done\n\
 \n\
 # Pull the model with timeout and retry logic\n\
-echo "Pulling model ${MODEL_NAME:-llama3:latest}..."\n\
+echo "Pulling model ${MODEL_NAME:-tinyllama:1.1b}..."\n\
 for attempt in {1..3}; do\n\
     echo "Pull attempt $attempt/3"\n\
-    if timeout 600 ollama pull ${MODEL_NAME:-llama3:latest}; then\n\
+    if timeout 600 ollama pull ${MODEL_NAME:-tinyllama:1.1b}; then\n\
         echo "Model pulled successfully!"\n\
         break\n\
     else\n\
@@ -83,7 +83,7 @@ ollama list\n\
 # Test model loading with a simple request\n\
 echo "Testing model loading..."\n\
 for i in {1..10}; do\n\
-    if curl -s -X POST http://127.0.0.1:11434/api/generate -d "{\\"model\\": \\"${MODEL_NAME:-llama3:latest}\\", \\"prompt\\": \\"test\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1}}" > /dev/null 2>&1; then\n\
+        if curl -s -X POST http://127.0.0.1:11434/api/generate -d "{\\"model\\": \\"${MODEL_NAME:-tinyllama:1.1b}\\", \\"prompt\\": \\"test\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1}}" > /dev/null 2>&1; then\n\
         echo "Model is ready for inference!"\n\
         break\n\
     else\n\
