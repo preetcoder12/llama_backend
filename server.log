@@ -393,3 +393,13 @@ No JSON found, extracting from text response
     timestamp: '2025-10-26T08:55:42.970Z'
   }
 }
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:56:43.087Z'
+  }
+}
