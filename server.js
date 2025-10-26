@@ -6,7 +6,7 @@ const axios = require("axios");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const PING_URL = 'https://llama-backend-1-ulet.onrender.com/api/status';
+const PING_URL = 'https://llama-backend-1-ulet.onrender.com/';
 const PING_INTERVAL_MS = 60 * 1000; // 1 minute
 
 // Middleware
