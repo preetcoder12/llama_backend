@@ -1,14 +1,21 @@
 services:
   - type: web
-    name: llama3-backend
+    name: llama-backend
     env: docker
     dockerfilePath: ./Dockerfile
     plan: free
+    healthCheckPath: /health
     envVars:
       - key: OLLAMA_URL
         value: http://localhost:11434
       - key: MODEL_NAME
-        value: llama3
+        value: llama3.2:1b
       - key: PORT
         value: 3000
-    healthCheckPath: /health
+      - key: NODE_ENV
+        value: production
+    buildCommand: echo "Using Dockerfile"
+    startCommand: ./start.sh
+    region: oregon
+    branch: main
+    autoDeploy: true

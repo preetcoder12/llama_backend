@@ -33,25 +33,46 @@ RUN echo '#!/bin/bash\n\
 # Start Ollama in background\n\
 ollama serve &\n\
 \n\
-# Wait for Ollama to be ready\n\
+# Wait for Ollama to be ready with more patience\n\
 echo "Waiting for Ollama to start..."\n\
-for i in {1..30}; do\n\
+for i in {1..60}; do\n\
     if curl -s http://127.0.0.1:11434/api/tags > /dev/null 2>&1; then\n\
         echo "Ollama is ready!"\n\
         break\n\
     else\n\
-        echo "Waiting for Ollama... ($i/30)"\n\
-        sleep 2\n\
+        echo "Waiting for Ollama... ($i/60)"\n\
+        sleep 3\n\
     fi\n\
 done\n\
 \n\
-# Pull the model and wait for completion\n\
+# Pull the model with timeout and retry logic\n\
 echo "Pulling model ${MODEL_NAME:-llama3.2:1b}..."\n\
-ollama pull ${MODEL_NAME:-llama3.2:1b}\n\
+for attempt in {1..3}; do\n\
+    echo "Pull attempt $attempt/3"\n\
+    if timeout 300 ollama pull ${MODEL_NAME:-llama3.2:1b}; then\n\
+        echo "Model pulled successfully!"\n\
+        break\n\
+    else\n\
+        echo "Pull attempt $attempt failed, retrying..."\n\
+        sleep 10\n\
+    fi\n\
+done\n\
 \n\
 # Verify model is available\n\
 echo "Verifying model is available..."\n\
 ollama list\n\
+\n\
+# Test model loading with a simple request\n\
+echo "Testing model loading..."\n\
+for i in {1..10}; do\n\
+    if curl -s -X POST http://127.0.0.1:11434/api/generate -d "{\\"model\\": \\"${MODEL_NAME:-llama3.2:1b}\\", \\"prompt\\": \\"test\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1}}" > /dev/null 2>&1; then\n\
+        echo "Model is ready for inference!"\n\
+        break\n\
+    else\n\
+        echo "Model not ready yet... ($i/10)"\n\
+        sleep 5\n\
+    fi\n\
+done\n\
 \n\
 # Start the Node.js application\n\
 echo "Starting Node.js application..."\n\

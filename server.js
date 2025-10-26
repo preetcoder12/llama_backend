@@ -37,12 +37,27 @@ const OLLAMA_BASE_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
 const MODEL_NAME = process.env.MODEL_NAME || "llama3.2:1b";
 
 // Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({
-    status: "OK",
-    message: "Llama 3 Backend API is running",
-    timestamp: new Date().toISOString(),
-  });
+app.get("/health", async (req, res) => {
+  try {
+    const ollamaReady = await checkOllamaReady();
+    const status = ollamaReady ? "OK" : "LOADING";
+    const httpStatus = ollamaReady ? 200 : 503;
+    
+    res.status(httpStatus).json({
+      status: status,
+      message: ollamaReady ? "Llama 3 Backend API is running" : "Model is still loading",
+      ollama_ready: ollamaReady,
+      model: MODEL_NAME,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: "ERROR",
+      message: "Health check failed",
+      error: error.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
 });
 
 // Status endpoint to check if Ollama is ready
@@ -98,11 +113,12 @@ app.get("/api/status", async (req, res) => {
 });
 
 // Check if Ollama is ready and model is available
-async function checkOllamaReady() {
+async function checkOllamaReady(retryCount = 0) {
+  const maxRetries = 3;
   try {
-    console.log(`[DEBUG] Checking Ollama at: ${OLLAMA_BASE_URL}`);
+    console.log(`[DEBUG] Checking Ollama at: ${OLLAMA_BASE_URL} (attempt ${retryCount + 1}/${maxRetries + 1})`);
     // First check if Ollama service is running
-    const tagsResponse = await axios.get(`${OLLAMA_BASE_URL}/api/tags`, { timeout: 5000 });
+    const tagsResponse = await axios.get(`${OLLAMA_BASE_URL}/api/tags`, { timeout: 10000 });
     
     // Check if our specific model is available
     const models = tagsResponse.data.models || [];
@@ -162,17 +178,27 @@ async function checkOllamaReady() {
             num_predict: 1
           }
         },
-        { timeout: 10000 }
+        { timeout: 60000 } // Increased to 60 seconds
       );
       
       return true;
     } catch (testError) {
       console.log(`Model ${MODEL_NAME} exists but not ready:`, testError.message);
+      if (retryCount < maxRetries) {
+        console.log(`[DEBUG] Retrying model check in 10 seconds...`);
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        return await checkOllamaReady(retryCount + 1);
+      }
       return false;
     }
     
   } catch (error) {
     console.log(`Ollama service check failed:`, error.message);
+    if (retryCount < maxRetries) {
+      console.log(`[DEBUG] Retrying Ollama check in 5 seconds...`);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      return await checkOllamaReady(retryCount + 1);
+    }
     return false;
   }
 }
@@ -237,7 +263,7 @@ app.post("/api/chat", async (req, res) => {
         headers: {
           "Content-Type": "application/json",
         },
-        timeout: 30000, // 30 seconds timeout for faster responses
+        timeout: 120000, // 2 minutes timeout for model loading
       }
     );
 
@@ -380,7 +406,7 @@ Please provide travel recommendations that match these preferences.`;
         headers: {
           "Content-Type": "application/json",
         },
-        timeout: 120000,
+        timeout: 180000, // 3 minutes timeout for vibe recommendations
       }
     );
 
@@ -532,24 +558,26 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Llama 3 Backend API is running on port ${PORT}`);
-  console.log(`📡 Health check: http://localhost:${PORT}/health`);
-  console.log(`💬 Chat endpoint: http://localhost:${PORT}/api/chat`);
-  console.log(
-    `🎯 Vibe recommendations: http://localhost:${PORT}/api/vibe-recommendations`
-  );
-  console.log(`📋 Models endpoint: http://localhost:${PORT}/api/models`);
-  console.log("\n📝 Example Postman requests:");
-  console.log("POST http://localhost:3000/api/chat");
-  console.log("Content-Type: application/json");
-  console.log('Body: {"prompt": "Hello, how are you?"}');
-  console.log("\nPOST http://localhost:3000/api/vibe-recommendations");
-  console.log("Content-Type: application/json");
-  console.log(
-    'Body: {"selectedVibes": ["mountains", "lakes"], "location": "Delhi", "budget": "2000", "duration": "1 day"}'
-  );
-});
+// Start server with initial delay for Ollama
+setTimeout(() => {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Llama 3 Backend API is running on port ${PORT}`);
+    console.log(`📡 Health check: http://localhost:${PORT}/health`);
+    console.log(`💬 Chat endpoint: http://localhost:${PORT}/api/chat`);
+    console.log(
+      `🎯 Vibe recommendations: http://localhost:${PORT}/api/vibe-recommendations`
+    );
+    console.log(`📋 Models endpoint: http://localhost:${PORT}/api/models`);
+    console.log("\n📝 Example Postman requests:");
+    console.log("POST http://localhost:3000/api/chat");
+    console.log("Content-Type: application/json");
+    console.log('Body: {"prompt": "Hello, how are you?"}');
+    console.log("\nPOST http://localhost:3000/api/vibe-recommendations");
+    console.log("Content-Type: application/json");
+    console.log(
+      'Body: {"selectedVibes": ["mountains", "lakes"], "location": "Delhi", "budget": "2000", "duration": "1 day"}'
+    );
+  });
+}, 30000); // Wait 30 seconds for Ollama to initialize
 
 module.exports = app;
