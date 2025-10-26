@@ -383,3 +383,13 @@ No JSON found, extracting from text response
     at JSON.parse (<anonymous>)
     at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:55:42.970Z'
+  }
+}
