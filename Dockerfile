@@ -12,6 +12,13 @@ RUN apt-get update && apt-get install -y \
 # Install Ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
+# Set Ollama environment variables for memory optimization
+ENV OLLAMA_HOST=0.0.0.0
+ENV OLLAMA_ORIGINS=*
+ENV OLLAMA_KEEP_ALIVE=5m
+ENV OLLAMA_MAX_LOADED_MODELS=1
+ENV OLLAMA_MAX_QUEUE=512
+
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
@@ -30,7 +37,18 @@ COPY . .
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
-# Start Ollama in background\n\
+# Set memory limits for Ollama\n\
+export OLLAMA_MAX_LOADED_MODELS=1\n\
+export OLLAMA_MAX_QUEUE=512\n\
+export OLLAMA_KEEP_ALIVE=5m\n\
+\n\
+# Check available memory\n\
+echo "Available memory:"\n\
+free -h\n\
+echo "Memory usage before Ollama:"\n\
+ps aux --sort=-%mem | head -10\n\
+\n\
+# Start Ollama in background with memory optimization\n\
 ollama serve &\n\
 \n\
 # Wait for Ollama to be ready with more patience\n\
@@ -46,10 +64,10 @@ for i in {1..60}; do\n\
 done\n\
 \n\
 # Pull the model with timeout and retry logic\n\
-echo "Pulling model ${MODEL_NAME:-llama3.2:1b}..."\n\
+echo "Pulling model ${MODEL_NAME:-llama3:latest}..."\n\
 for attempt in {1..3}; do\n\
     echo "Pull attempt $attempt/3"\n\
-    if timeout 300 ollama pull ${MODEL_NAME:-llama3.2:1b}; then\n\
+    if timeout 600 ollama pull ${MODEL_NAME:-llama3:latest}; then\n\
         echo "Model pulled successfully!"\n\
         break\n\
     else\n\
@@ -65,7 +83,7 @@ ollama list\n\
 # Test model loading with a simple request\n\
 echo "Testing model loading..."\n\
 for i in {1..10}; do\n\
-    if curl -s -X POST http://127.0.0.1:11434/api/generate -d "{\\"model\\": \\"${MODEL_NAME:-llama3.2:1b}\\", \\"prompt\\": \\"test\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1}}" > /dev/null 2>&1; then\n\
+    if curl -s -X POST http://127.0.0.1:11434/api/generate -d "{\\"model\\": \\"${MODEL_NAME:-llama3:latest}\\", \\"prompt\\": \\"test\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1}}" > /dev/null 2>&1; then\n\
         echo "Model is ready for inference!"\n\
         break\n\
     else\n\

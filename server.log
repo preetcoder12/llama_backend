@@ -1,4 +1,4 @@
-nohup: ignoring input
+Started background ping job to keep Render backend alive.
 🚀 Llama 3 Backend API is running on port 3000
 📡 Health check: http://localhost:3000/health
 💬 Chat endpoint: http://localhost:3000/api/chat
@@ -13,3 +13,373 @@ Body: {"prompt": "Hello, how are you?"}
 POST http://localhost:3000/api/vibe-recommendations
 Content-Type: application/json
 Body: {"selectedVibes": ["mountains", "lakes"], "location": "Delhi", "budget": "2000", "duration": "1 day"}
+[DEBUG] Checking Ollama at: http://127.0.0.1:11434 (attempt 1/4)
+[DEBUG] Available models: [ 'llama2:latest', 'llama3:latest' ]
+[DEBUG] Looking for model: llama3:latest
+Sending vibe-based request to Ollama with preferences: manga book store
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:03:42.174Z'
+  }
+}
+Vibe-based response received in 41.75 seconds
+No JSON found, extracting from text response
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:04:42.136Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[DEBUG] Checking Ollama at: http://127.0.0.1:11434 (attempt 1/4)
+[DEBUG] Available models: [ 'llama2:latest', 'llama3:latest' ]
+[DEBUG] Looking for model: llama3:latest
+Sending vibe-based request to Ollama with preferences: manga book store
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:08:56.209Z'
+  }
+}
+Vibe-based response received in 51.42 seconds
+No JSON found, extracting from text response
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:09:46.293Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:13:17.356Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:13:17.448Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:13:56.351Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:23:47.172Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:24:46.529Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:25:47.111Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:26:46.643Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:29:46.707Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:32:46.799Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:33:46.914Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:34:47.060Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:37:47.096Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:41:46.930Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:42:50.145Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:45:08.010Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:45:08.600Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:45:47.056Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:46:47.706Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:48:47.683Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:51:47.183Z'
+  }
+}
+[PING] Render backend status: {
+  success: true,
+  data: {
+    backend: 'running',
+    ollama: 'model_loading',
+    model: 'llama3.2:1b',
+    message: 'Model llama3.2:1b exists but not ready for inference. Please wait 1-2 minutes.',
+    timestamp: '2025-10-26T08:52:47.217Z'
+  }
+}
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[PING] Error pinging Render backend: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at Response.json (file:///home/preet/Documents/locallm_project/node_modules/node-fetch/src/body.js:149:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)

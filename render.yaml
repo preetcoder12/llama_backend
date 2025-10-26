@@ -9,7 +9,7 @@ services:
       - key: OLLAMA_URL
         value: http://localhost:11434
       - key: MODEL_NAME
-        value: llama3.2:1b
+        value: tinyllama:1.1b
       - key: PORT
         value: 3000
       - key: NODE_ENV
