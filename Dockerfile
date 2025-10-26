@@ -18,6 +18,7 @@ ENV OLLAMA_ORIGINS=*
 ENV OLLAMA_KEEP_ALIVE=5m
 ENV OLLAMA_MAX_LOADED_MODELS=1
 ENV OLLAMA_MAX_QUEUE=512
+ENV OLLAMA_CONTEXT_LENGTH=2048
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
@@ -41,6 +42,7 @@ RUN echo '#!/bin/bash\n\
 export OLLAMA_MAX_LOADED_MODELS=1\n\
 export OLLAMA_MAX_QUEUE=512\n\
 export OLLAMA_KEEP_ALIVE=5m\n\
+export OLLAMA_CONTEXT_LENGTH=2048\n\
 \n\
 # Check available memory\n\
 echo "Available memory:"\n\
@@ -83,7 +85,7 @@ ollama list\n\
 # Test model loading with a simple request\n\
 echo "Testing model loading..."\n\
 for i in {1..10}; do\n\
-        if curl -s -X POST http://127.0.0.1:11434/api/generate -d "{\\"model\\": \\"${MODEL_NAME:-tinyllama:1.1b}\\", \\"prompt\\": \\"test\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1}}" > /dev/null 2>&1; then\n\
+    if curl -s -X POST http://127.0.0.1:11434/api/generate -d "{\\"model\\": \\"${MODEL_NAME:-tinyllama:1.1b}\\", \\"prompt\\": \\"test\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1}}" > /dev/null 2>&1; then\n\
         echo "Model is ready for inference!"\n\
         break\n\
     else\n\
