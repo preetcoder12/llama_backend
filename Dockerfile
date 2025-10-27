@@ -19,15 +19,18 @@ RUN apt-get update && apt-get install -y \
 # Install Ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
-# Set Ollama environment variables for memory optimization
+# Set Ollama environment variables for memory optimization (Render-friendly)
 ENV OLLAMA_HOST=0.0.0.0
 ENV OLLAMA_ORIGINS=*
-ENV OLLAMA_KEEP_ALIVE=2m
+ENV OLLAMA_KEEP_ALIVE=30s
 ENV OLLAMA_MAX_LOADED_MODELS=1
-ENV OLLAMA_MAX_QUEUE=256
-ENV OLLAMA_CONTEXT_LENGTH=1024
+ENV OLLAMA_MAX_QUEUE=64
+ENV OLLAMA_CONTEXT_LENGTH=512
 ENV OLLAMA_NUM_PARALLEL=1
-ENV OLLAMA_MAX_LOADED_MODELS=1
+ENV OLLAMA_FLASH_ATTENTION=false
+ENV OLLAMA_GPU_OVERHEAD=0
+ENV OLLAMA_NOHISTORY=true
+ENV OLLAMA_NOPRUNE=false
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
@@ -54,14 +57,18 @@ COPY . .
 RUN echo '#!/bin/bash\n\
 set -e\n\
 \n\
-# Set memory limits for Ollama\n\
+# Set memory limits for Ollama (Render-optimized)\n\
 export OLLAMA_MAX_LOADED_MODELS=1\n\
-export OLLAMA_MAX_QUEUE=256\n\
-export OLLAMA_KEEP_ALIVE=2m\n\
-export OLLAMA_CONTEXT_LENGTH=1024\n\
+export OLLAMA_MAX_QUEUE=64\n\
+export OLLAMA_KEEP_ALIVE=30s\n\
+export OLLAMA_CONTEXT_LENGTH=512\n\
 export OLLAMA_NUM_PARALLEL=1\n\
 export OLLAMA_HOST=0.0.0.0\n\
 export OLLAMA_ORIGINS=*\n\
+export OLLAMA_FLASH_ATTENTION=false\n\
+export OLLAMA_GPU_OVERHEAD=0\n\
+export OLLAMA_NOHISTORY=true\n\
+export OLLAMA_NOPRUNE=false\n\
 \n\
 # Function to check if Ollama is ready\n\
 check_ollama_ready() {\n\
@@ -88,12 +95,16 @@ wait_for_ollama() {\n\
     return 1\n\
 }\n\
 \n\
-# Check available memory\n\
+# Check available memory and optimize for Render\n\
 echo "=== System Information ==="\n\
 echo "Available memory:"\n\
 free -h\n\
 echo "Memory usage before Ollama:"\n\
 ps aux --sort=-%mem | head -10\n\
+\n\
+# Set memory limits for the shell\n\
+ulimit -v 400000  # Limit virtual memory to ~400MB\n\
+ulimit -m 400000  # Limit physical memory to ~400MB\n\
 \n\
 # Start Ollama in background\n\
 echo "=== Starting Ollama ==="\n\
@@ -130,17 +141,17 @@ echo "=== Verifying Model ==="\n\
 echo "Final model list:"\n\
 ollama list\n\
 \n\
-# Test model with a simple request\n\
-echo "Testing model loading..."\n\
-for i in {1..5}; do\n\
+# Test model with a minimal request (memory-efficient)\n\
+echo "Testing model loading with minimal request..."\n\
+for i in {1..3}; do\n\
     if curl -s -X POST http://127.0.0.1:11434/api/generate \\\n\
         -H "Content-Type: application/json" \\\n\
-        -d "{\\"model\\": \\"qwen2.5:0.5b\\", \\"prompt\\": \\"Hello\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1}}" > /dev/null 2>&1; then\n\
+        -d "{\\"model\\": \\"qwen2.5:0.5b\\", \\"prompt\\": \\"Hi\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1, \\"temperature\\": 0.1}}" > /dev/null 2>&1; then\n\
         echo "Model is ready for inference!"\n\
         break\n\
     else\n\
-        echo "Model not ready yet... ($i/5)"\n\
-        sleep 5\n\
+        echo "Model not ready yet... ($i/3)"\n\
+        sleep 3\n\
     fi\n\
 done\n\
 \n\
