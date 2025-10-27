@@ -32,6 +32,11 @@ ENV OLLAMA_GPU_OVERHEAD=0
 ENV OLLAMA_NOHISTORY=true
 ENV OLLAMA_NOPRUNE=false
 
+# Set Go runtime environment variables for memory management
+ENV GOMEMLIMIT=400MiB
+ENV GOGC=50
+ENV GOMAXPROCS=1
+
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
@@ -70,6 +75,11 @@ export OLLAMA_GPU_OVERHEAD=0\n\
 export OLLAMA_NOHISTORY=true\n\
 export OLLAMA_NOPRUNE=false\n\
 \n\
+# Set Go runtime memory management\n\
+export GOMEMLIMIT=400MiB\n\
+export GOGC=50\n\
+export GOMAXPROCS=1\n\
+\n\
 # Function to check if Ollama is ready\n\
 check_ollama_ready() {\n\
     curl -s http://127.0.0.1:11434/api/tags > /dev/null 2>&1\n\
@@ -102,9 +112,10 @@ free -h\n\
 echo "Memory usage before Ollama:"\n\
 ps aux --sort=-%mem | head -10\n\
 \n\
-# Set memory limits for the shell\n\
-ulimit -v 400000  # Limit virtual memory to ~400MB\n\
-ulimit -m 400000  # Limit physical memory to ~400MB\n\
+# Set Go runtime memory limits (less aggressive)\n\
+export GOMEMLIMIT=400MiB\n\
+export GOGC=50\n\
+export GOMAXPROCS=1\n\
 \n\
 # Start Ollama in background\n\
 echo "=== Starting Ollama ==="\n\
