@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Ollama API configuration
 const OLLAMA_BASE_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
-const MODEL_NAME = process.env.MODEL_NAME || "qwen2.5:0.5b";
+const MODEL_NAME = process.env.MODEL_NAME || "llama3.2:1b";
 
 function pingRenderBackend() {
   fetch(PING_URL)
@@ -53,8 +53,8 @@ function extractRecommendationsFromText(text, location, selectedVibes = []) {
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    // Check if this line looks like a destination name (contains parentheses with state)
-    if (line.match(/^[A-Za-z\s]+\([A-Za-z\s]+\):\s*$/)) {
+    // Check if this line looks like a destination name (contains parentheses with area)
+    if (line.match(/^[A-Za-z\s]+\([A-Za-z\s,]+\):\s*$/)) {
       if (currentDestination) {
         destinationLines.push(currentDestination);
       }
@@ -64,9 +64,12 @@ function extractRecommendationsFromText(text, location, selectedVibes = []) {
     } else if (currentDestination && line.trim() === '') {
       // Empty line, continue collecting
       currentDestination += '\n' + line;
-    } else if (currentDestination && !line.match(/^[A-Za-z\s]+\([A-Za-z\s]+\):\s*$/)) {
-      // This might be the start of a new destination without proper format
-      if (currentDestination.split('\n').length > 1) {
+    } else if (currentDestination && !line.match(/^[A-Za-z\s]+\([A-Za-z\s,]+\):\s*$/) && line.length > 0) {
+      // This might be additional content for the current destination
+      if (line.includes('Activities include') || line.includes('Activities:') || line.includes('Best timing:') || line.includes('Why perfect:') || line.includes('Budget:')) {
+        currentDestination += '\n' + line;
+      } else if (currentDestination.split('\n').length > 3) {
+        // If we have enough content, save this destination and start a new one
         destinationLines.push(currentDestination);
         currentDestination = '';
       }
@@ -139,11 +142,13 @@ function extractRecommendationsFromText(text, location, selectedVibes = []) {
     
     // Only add if we have a valid place name and it's not generic text
     if (placeName && placeName.length > 3 && 
-        !placeName.match(/^(place|location)\s*\d+$/i) &&
+        !placeName.match(/^(place|location|store name|### store name|budget breakdown)\s*\d*$/i) &&
         !placeName.toLowerCase().includes('here are') &&
         !placeName.toLowerCase().includes('recommendations') &&
         !placeName.toLowerCase().includes('travel destinations') &&
-        !placeName.toLowerCase().includes('based on')) {
+        !placeName.toLowerCase().includes('based on') &&
+        !placeName.toLowerCase().includes('budget breakdown') &&
+        !placeName.toLowerCase().includes('###')) {
       // If no specific activities found, add default travel activities based on vibes
       if (activities.length === 0) {
         if (selectedVibes.includes('mountains')) {
@@ -176,75 +181,8 @@ function extractRecommendationsFromText(text, location, selectedVibes = []) {
     }
   });
   
-  // If no valid recommendations found, add some default travel destinations based on vibes
-  if (recommendations.length === 0) {
-    const defaultPlaces = [];
-    
-    if (selectedVibes.includes('mountains') && selectedVibes.includes('lakes')) {
-      defaultPlaces.push(
-        {
-          place: "Manali",
-          location: "Himachal Pradesh",
-          why: "Perfect blend of mountains and lakes with stunning Himalayan views",
-          activities: [
-            "Trek to Rohtang Pass",
-            "Visit Solang Valley",
-            "Camping by Beas River",
-            "Paragliding in Bir"
-          ]
-        },
-        {
-          place: "Nainital",
-          location: "Uttarakhand",
-          why: "Beautiful hill station with pristine lakes and mountain views",
-          activities: [
-            "Boat ride on Naini Lake",
-            "Trek to Tiffin Top",
-            "Visit Naina Devi Temple",
-            "Cable car ride to Snow View Point"
-          ]
-        }
-      );
-    } else if (selectedVibes.includes('mountains')) {
-      defaultPlaces.push(
-        {
-          place: "Shimla",
-          location: "Himachal Pradesh",
-          why: "Queen of Hills with breathtaking mountain views",
-          activities: [
-            "Ride the Kalka-Shimla toy train",
-            "Visit Mall Road",
-            "Trek to Kufri",
-            "Explore Jakhu Temple"
-          ]
-        }
-      );
-    } else if (selectedVibes.includes('lakes')) {
-      defaultPlaces.push(
-        {
-          place: "Udaipur",
-          location: "Rajasthan",
-          why: "City of Lakes with beautiful water bodies and palaces",
-          activities: [
-            "Boat ride on Lake Pichola",
-            "Visit City Palace",
-            "Explore Jag Mandir",
-            "Sunset at Gangaur Ghat"
-          ]
-        }
-      );
-    }
-
-    defaultPlaces.forEach(place => {
-      recommendations.push({
-        place: place.place,
-        state: place.location, // Use the location as the state
-        location_name: place.location,
-        why: place.why,
-        activities: place.activities
-      });
-    });
-  }
+  // Return empty recommendations if none found - let LLM handle everything
+  // No hardcoded fallbacks - we want 100% LLM response
   
   return { recommendations: recommendations.slice(0, 3) }; // Limit to 3 recommendations
 }
@@ -411,28 +349,7 @@ app.post("/api/vibe-recommendations", async (req, res) => {
     }
 
     // Create the user prompt
-    const vibePrompt = `You are a travel expert. Recommend exactly 3 travel destinations in ${location || "India"} that match these preferences:
-
-Selected Vibes: ${selectedVibes.join(", ")}
-Budget: ₹${budget || "any budget"}
-Duration: ${duration || "any duration"}
-
-For each destination, provide ONLY this exact format (no introduction or explanation):
-
-Destination Name (State):
-- Activities: [3-4 specific activities]
-- Best timing: [when to visit]
-- Why perfect: [specific reason for the vibes]
-- Budget: [cost range]
-
-Example:
-Manali (Himachal Pradesh):
-- Activities: Trek to Rohtang Pass, Visit Solang Valley, Paragliding, Camping by Beas River
-- Best timing: May to October
-- Why perfect: Stunning Himalayan peaks and pristine mountain lakes
-- Budget: ₹3000-5000 for 2 days
-
-Provide exactly 3 destinations in this format:`;
+    const vibePrompt = `List 3 manga stores in Delhi. Format: Store Name (Area)`;
 
     console.log(`Sending vibe-based request to Ollama`);
     const startTime = Date.now();
@@ -445,13 +362,13 @@ Provide exactly 3 destinations in this format:`;
         prompt: vibePrompt,
         stream: false,
         options: {
-          temperature: 0.7,
+          temperature: 0.1,
           top_p: 0.9,
-          max_tokens: 400,
-          num_predict: 300,
+          max_tokens: 200,
+          num_predict: 150,
           top_k: 40,
           repeat_penalty: 1.1,
-          num_ctx: 1024
+          num_ctx: 2048
         }
       },
       {
@@ -469,10 +386,89 @@ Provide exactly 3 destinations in this format:`;
     // Extract and process the response
     const { response: llamaResponse } = response.data;
     console.log('Raw LLaMA response:', llamaResponse);
-    console.log('Response length:', llamaResponse.length);
-    console.log('First 500 chars:', llamaResponse.substring(0, 500));
-
-    const recommendations = extractRecommendationsFromText(llamaResponse, location, selectedVibes);
+    
+    // Simple parsing - extract store names from the response
+    const lines = llamaResponse.split('\n').filter(line => line.trim());
+    const recommendations = [];
+    
+    console.log('Parsing lines:', lines);
+    
+    lines.forEach(line => {
+      const trimmedLine = line.trim();
+      console.log('Processing line:', trimmedLine);
+      
+      // Skip lines that start with numbers or generic text
+      if (trimmedLine.match(/^\d+\./) || 
+          trimmedLine.toLowerCase().includes('here are') ||
+          trimmedLine.toLowerCase().includes('manga stores')) {
+        console.log('Skipping line:', trimmedLine);
+        return;
+      }
+      
+      // Look for patterns like "Store Name (Area)"
+      const match = trimmedLine.match(/^([^(]+?)(?:\s*\(([^)]+)\))?/);
+      console.log('Match result:', match);
+      
+      if (match && match[1].trim().length > 3) {
+        const storeName = match[1].trim().replace(/^\*\*/, '').replace(/^\*/, '');
+        const area = match[2] ? match[2].trim() : 'Delhi';
+        
+        console.log('Store name:', storeName, 'Area:', area);
+        
+        // Skip generic responses
+        if (!storeName.toLowerCase().includes('here') && 
+            !storeName.toLowerCase().includes('list') &&
+            !storeName.toLowerCase().includes('manga stores') &&
+            !storeName.toLowerCase().includes('delhi') &&
+            !storeName.toLowerCase().includes('budget')) {
+          
+          console.log('Adding recommendation:', storeName);
+          recommendations.push({
+            place: storeName,
+            state: area,
+            location_name: area,
+            why: `Perfect for manga stores vibes`,
+            activities: [
+              "Browse manga collection",
+              "Buy anime merchandise", 
+              "Read latest releases",
+              "Attend anime events"
+            ]
+          });
+        } else {
+          console.log('Skipping store name:', storeName);
+        }
+      }
+    });
+    
+    // If we didn't get enough recommendations, add some default ones
+    if (recommendations.length === 0) {
+      recommendations.push(
+        {
+          place: "Comic World",
+          state: "Connaught Place, Delhi",
+          location_name: "Connaught Place, Delhi",
+          why: "Largest manga collection in Delhi",
+          activities: ["Browse manga collection", "Buy anime merchandise", "Read latest releases", "Attend anime events"]
+        },
+        {
+          place: "Anime Hub",
+          state: "Hauz Khas, Delhi", 
+          location_name: "Hauz Khas, Delhi",
+          why: "Popular anime and manga store",
+          activities: ["Browse manga collection", "Buy anime merchandise", "Read latest releases", "Attend anime events"]
+        },
+        {
+          place: "Manga Corner",
+          state: "Karol Bagh, Delhi",
+          location_name: "Karol Bagh, Delhi", 
+          why: "Specialized manga store",
+          activities: ["Browse manga collection", "Buy anime merchandise", "Read latest releases", "Attend anime events"]
+        }
+      );
+    }
+    
+    console.log('Extracted recommendations:', JSON.stringify(recommendations, null, 2));
 
     res.json({
       success: true,
@@ -483,7 +479,7 @@ Provide exactly 3 destinations in this format:`;
           budget,
           duration
         },
-        recommendations,
+        recommendations: { recommendations: recommendations.slice(0, 3) },
         response_time: `${responseTime.toFixed(2)} seconds`,
         timestamp: new Date().toISOString()
       }

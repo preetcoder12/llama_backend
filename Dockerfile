@@ -25,7 +25,7 @@ ENV OLLAMA_ORIGINS=*
 ENV OLLAMA_KEEP_ALIVE=30s
 ENV OLLAMA_MAX_LOADED_MODELS=1
 ENV OLLAMA_MAX_QUEUE=64
-ENV OLLAMA_CONTEXT_LENGTH=512
+ENV OLLAMA_CONTEXT_LENGTH=4096
 ENV OLLAMA_NUM_PARALLEL=1
 ENV OLLAMA_FLASH_ATTENTION=false
 ENV OLLAMA_GPU_OVERHEAD=0
@@ -41,7 +41,7 @@ ENV GOMAXPROCS=1
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV OLLAMA_URL=http://127.0.0.1:11434
-ENV MODEL_NAME=qwen2.5:0.5b
+ENV MODEL_NAME=llama3.2:1b
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
@@ -72,7 +72,7 @@ set -e\n\
 export OLLAMA_MAX_LOADED_MODELS=1\n\
 export OLLAMA_MAX_QUEUE=64\n\
 export OLLAMA_KEEP_ALIVE=30s\n\
-export OLLAMA_CONTEXT_LENGTH=512\n\
+export OLLAMA_CONTEXT_LENGTH=4096\n\
 export OLLAMA_NUM_PARALLEL=1\n\
 export OLLAMA_HOST=0.0.0.0\n\
 export OLLAMA_ORIGINS=*\n\
@@ -137,16 +137,16 @@ fi\n\
 \n\
 # Pull the model if not present\n\
 echo "=== Managing Models ==="\n\
-if ! ollama list | grep -q "qwen2.5:0.5b"; then\n\
-    echo "Pulling qwen2.5:0.5b model..."\n\
-    ollama pull qwen2.5:0.5b\n\
+if ! ollama list | grep -q "llama3.2:1b"; then\n\
+    echo "Pulling llama3.2:1b model..."\n\
+    ollama pull llama3.2:1b\n\
 else\n\
-    echo "qwen2.5:0.5b model is already available!"\n\
+    echo "llama3.2:1b model is already available!"\n\
 fi\n\
 \n\
 # Clean up any other models\n\
 echo "Cleaning up unwanted models..."\n\
-ollama list | awk "NR>1 {print \$1}" | grep -v "qwen2.5:0.5b" | while read model; do\n\
+ollama list | awk "NR>1 {print \$1}" | grep -v "llama3.2:1b" | while read model; do\n\
     if [ -n "$model" ]; then\n\
         echo "Removing unwanted model: $model"\n\
         ollama rm "$model" || true\n\
@@ -163,7 +163,7 @@ echo "Testing model loading with minimal request..."\n\
 for i in {1..3}; do\n\
     if curl -s -X POST http://127.0.0.1:11434/api/generate \\\n\
         -H "Content-Type: application/json" \\\n\
-        -d "{\\"model\\": \\"qwen2.5:0.5b\\", \\"prompt\\": \\"Hi\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1, \\"temperature\\": 0.1}}" > /dev/null 2>&1; then\n\
+        -d "{\\"model\\": \\"llama3.2:1b\\", \\"prompt\\": \\"Hi\\", \\"stream\\": false, \\"options\\": {\\"num_predict\\": 1, \\"temperature\\": 0.1}}" > /dev/null 2>&1; then\n\
         echo "Model is ready for inference!"\n\
         break\n\
     else\n\
