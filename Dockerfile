@@ -37,6 +37,12 @@ ENV GOMEMLIMIT=400MiB
 ENV GOGC=50
 ENV GOMAXPROCS=1
 
+# Set Node.js environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV OLLAMA_URL=http://127.0.0.1:11434
+ENV MODEL_NAME=qwen2.5:0.5b
+
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
@@ -168,6 +174,19 @@ done\n\
 \n\
 # Start the Node.js application\n\
 echo "=== Starting Node.js Application ==="\n\
+echo "Starting server on port $PORT..."\n\
+echo "Ollama URL: $OLLAMA_BASE_URL"\n\
+echo "Model: $MODEL_NAME"\n\
+\n\
+# Test Node.js server startup\n\
+echo "Testing Node.js server startup..."\n\
+timeout 10s node -e "console.log('Node.js is working'); process.exit(0);" || {\n\
+    echo "ERROR: Node.js test failed"\n\
+    exit 1\n\
+}\n\
+\n\
+# Start Node.js with proper error handling\n\
+echo "Starting Node.js server..."\n\
 exec node server.js' > start.sh
 
 RUN chmod +x start.sh
