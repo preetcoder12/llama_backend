@@ -12,9 +12,10 @@ RUN apt-get update && apt-get install -y \
 # Install Ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
-# Pre-pull the model during build to avoid repeated downloads
+# Pre-pull ONLY qwen2.5:0.5b model during build
 RUN ollama serve &
 RUN sleep 10 && ollama pull qwen2.5:0.5b
+RUN ollama list
 RUN pkill ollama
 
 # Set Ollama environment variables for memory optimization
@@ -73,17 +74,27 @@ for i in {1..60}; do\n\
     fi\n\
 done\n\
 \n\
-# Check if model is already available (pre-pulled during build)\n\
-echo "Checking if model is available..."\n\
+# Ensure ONLY qwen2.5:0.5b model is present\n\
+echo "Ensuring only qwen2.5:0.5b model is available..."\n\
 ollama list\n\
 \n\
-# If model is not available, pull it\n\
+# Remove any other models if present\n\
+for model in $(ollama list | awk 'NR>1 {print $1}' | grep -v "qwen2.5:0.5b"); do\n\
+    echo "Removing unwanted model: $model"\n\
+    ollama rm "$model"\n\
+done\n\
+\n\
+# Ensure qwen2.5:0.5b is available\n\
 if ! ollama list | grep -q "qwen2.5:0.5b"; then\n\
-    echo "Model not found, pulling ${MODEL_NAME:-qwen2.5:0.5b}..."\n\
-    ollama pull ${MODEL_NAME:-qwen2.5:0.5b}\n\
+    echo "Pulling qwen2.5:0.5b model..."\n\
+    ollama pull qwen2.5:0.5b\n\
 else\n\
-    echo "Model already available!"\n\
+    echo "qwen2.5:0.5b model is ready!"\n\
 fi\n\
+\n\
+# Verify only qwen2.5:0.5b is present\n\
+echo "Final model list:"\n\
+ollama list\n\
 \n\
 # Test model loading with a simple request\n\
 echo "Testing model loading..."\n\
