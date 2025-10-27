@@ -6,7 +6,7 @@ const axios = require("axios");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const PING_URL = 'http://localhost:3000';
+const PING_URL = `http://localhost:${PORT}`;
 const PING_INTERVAL_MS = 60 * 1000; // 1 minute
 
 // Middleware
@@ -497,6 +497,21 @@ Provide exactly 3 destinations in this format:`;
       details: error.message
     });
   }
+});
+
+// Root endpoint - welcome page
+app.get("/", (req, res) => {
+  res.json({
+    message: "🚀 Llama Backend API is running!",
+    status: "OK",
+    model: MODEL_NAME,
+    endpoints: {
+      health: "/health",
+      status: "/api/status", 
+      vibe_recommendations: "/api/vibe-recommendations"
+    },
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Basic health check endpoint
