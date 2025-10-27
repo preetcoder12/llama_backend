@@ -15,10 +15,12 @@ RUN curl -fsSL https://ollama.com/install.sh | sh
 # Set Ollama environment variables for memory optimization
 ENV OLLAMA_HOST=0.0.0.0
 ENV OLLAMA_ORIGINS=*
-ENV OLLAMA_KEEP_ALIVE=5m
+ENV OLLAMA_KEEP_ALIVE=2m
 ENV OLLAMA_MAX_LOADED_MODELS=1
-ENV OLLAMA_MAX_QUEUE=512
-ENV OLLAMA_CONTEXT_LENGTH=2048
+ENV OLLAMA_MAX_QUEUE=256
+ENV OLLAMA_CONTEXT_LENGTH=1024
+ENV OLLAMA_NUM_PARALLEL=1
+ENV OLLAMA_MAX_LOADED_MODELS=1
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
@@ -40,9 +42,10 @@ COPY . .
 RUN echo '#!/bin/bash\n\
 # Set memory limits for Ollama\n\
 export OLLAMA_MAX_LOADED_MODELS=1\n\
-export OLLAMA_MAX_QUEUE=512\n\
-export OLLAMA_KEEP_ALIVE=5m\n\
-export OLLAMA_CONTEXT_LENGTH=2048\n\
+export OLLAMA_MAX_QUEUE=256\n\
+export OLLAMA_KEEP_ALIVE=2m\n\
+export OLLAMA_CONTEXT_LENGTH=1024\n\
+export OLLAMA_NUM_PARALLEL=1\n\
 \n\
 # Check available memory\n\
 echo "Available memory:"\n\
@@ -66,10 +69,10 @@ for i in {1..60}; do\n\
 done\n\
 \n\
 # Pull the model with timeout and retry logic\n\
-echo "Pulling model ${MODEL_NAME:-tinyllama:1.1b}..."\n\
+echo "Pulling model ${MODEL_NAME:-qwen2.5:0.5b}..."\n\
 for attempt in {1..3}; do\n\
     echo "Pull attempt $attempt/3"\n\
-    if timeout 600 ollama pull ${MODEL_NAME:-tinyllama:1.1b}; then\n\
+    if timeout 600 ollama pull ${MODEL_NAME:-qwen2.5:0.5b}; then\n\
         echo "Model pulled successfully!"\n\
         break\n\
     else\n\

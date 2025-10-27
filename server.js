@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Ollama API configuration
 const OLLAMA_BASE_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
-const MODEL_NAME = process.env.MODEL_NAME || "llama3:latest";
+const MODEL_NAME = process.env.MODEL_NAME || "qwen2.5:0.5b";
 
 function pingRenderBackend() {
   fetch(PING_URL)
@@ -447,11 +447,11 @@ Provide exactly 3 destinations in this format:`;
         options: {
           temperature: 0.7,
           top_p: 0.9,
-          max_tokens: 500,
-          num_predict: 400,
+          max_tokens: 400,
+          num_predict: 300,
           top_k: 40,
           repeat_penalty: 1.1,
-          num_ctx: 2048
+          num_ctx: 1024
         }
       },
       {
